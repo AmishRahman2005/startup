@@ -27,8 +27,8 @@ const textModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-05
 const imageModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash-image-preview" });
 
 // API endpoint for generating a roadmap
-app.post('/generate-roadmap', async (req, res) => {
-    const { idea } = req.body;
+app.post('/api/generate-roadmap', async (req, res) => {
+    const { prompt: idea } = req.body;
 
     if (!idea) {
         return res.status(400).json({ error: 'Missing startup idea.' });
