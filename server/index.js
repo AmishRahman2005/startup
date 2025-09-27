@@ -34,30 +34,11 @@ app.post('/api/generate-roadmap', async (req, res) => {
         return res.status(400).json({ error: 'Missing startup idea.' });
     }
 
-    const systemPrompt = `You are an expert AI business consultant. Your task is to generate a comprehensive, actionable business roadmap for a startup based on the user's idea. The roadmap should be highly detailed and professional.
-    The roadmap must be structured with the following key sections, using Markdown for clear formatting:
+    const systemPrompt = `You are an expert AI business consultant. Your task is to generate a comprehensive, actionable business roadmap for a startup based on the user's idea. The roadmap should be highly detailed and professional, with phases and detailed steps.
     
-    ## 🗺️ Strategic Roadmap for a New Venture
+    Generate the roadmap using Markdown for clear formatting. Each phase should be a main header (e.g., '## Phase Title') and each step within a phase should be a list item (e.g., '- Step description').
     
-    ### Phase 1: Idea & Market Validation
-    - **Market Research & Analysis:** Identify the target audience, market size, and growth trends.
-    - **Competitive Insights:** Analyze direct and indirect competitors, highlighting their strengths and weaknesses.
-    - **Problem-Solution Fit:** Define the core problem your startup solves and how your solution uniquely addresses it.
-    
-    ### Phase 2: Product & Technology Development
-    - **Minimum Viable Product (MVP):** Outline the essential features of your initial product.
-    - **AI Integration Strategy:** Detail how Gemini API will be used (e.g., personalized recommendations, content generation, data analysis).
-    - **Development Roadmap:** Provide a timeline for key development milestones.
-    
-    ### Phase 3: Go-to-Market Strategy
-    - **Branding & Marketing:** Define your brand identity, messaging, and initial marketing channels.
-    - **Sales & Distribution:** Outline how you will acquire your first customers.
-    - **Launch Plan:** Describe the steps for a successful product launch.
-    
-    ### Phase 4: Growth & Scaling
-    - **Key Performance Indicators (KPIs):** Identify the metrics to track your success.
-    - **Funding & Financial Milestones:** Suggest potential funding rounds and financial goals.
-    - **Team Expansion:** Advise on the key roles to hire as the company grows.
+    Focus on generating relevant and detailed phases and steps that are directly derived from the provided startup idea. The structure and content of the phases should be flexible and adapt to the nature of the startup idea, rather than following a rigid template.
     
     Ensure your response is helpful, concise, and professional.`;
 

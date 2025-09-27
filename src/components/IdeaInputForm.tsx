@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { marked } from 'marked';
 import html2pdf from 'html2pdf.js';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const IdeaInputForm: React.FC = () => {
   const [startupIdea, setStartupIdea] = useState<string>('');
-  const [roadmap, setRoadmap] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const parseMarkdown = (text: string) => ({
     __html: text ? String(marked.parse(text)) : ''
@@ -18,7 +19,6 @@ const IdeaInputForm: React.FC = () => {
       return;
     }
 
-    setRoadmap('');
     setIsLoading(true);
 
     try {
@@ -41,10 +41,12 @@ const IdeaInputForm: React.FC = () => {
         data?.roadmap ||
         "⚠️ No roadmap generated. Try again.";
 
-      setRoadmap(generatedText);
+      // Navigate to the roadmap page with the generated text
+      navigate('/roadmap', { state: { roadmap: generatedText } });
+
     } catch (error: any) {
       console.error('Error generating roadmap:', error);
-      setRoadmap(
+      alert(
         `❌ Error occurred while generating the roadmap. Please try again.\n\nDetails: ${
           error?.message || error
         }`
@@ -55,6 +57,8 @@ const IdeaInputForm: React.FC = () => {
   };
 
   const handleExportPDF = () => {
+    // This function will now be called from the Roadmap component, or removed if not needed there.
+    // For now, it's kept here but will be removed from the UI.
     const roadmapElement = document.getElementById('roadmap-output');
     if (!roadmapElement) return;
 
@@ -153,39 +157,7 @@ const IdeaInputForm: React.FC = () => {
         </div>
       </motion.section>
 
-      <AnimatePresence>
-        {roadmap && (
-          <motion.section
-            key="roadmap-output"
-            className="w-full max-w-3xl mb-12 flex justify-center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div
-              id="roadmap-output"
-              className="bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xl border w-full"
-            >
-              <h2 className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4 text-center">
-                Your Strategic Roadmap
-              </h2>
-              <div
-                className="prose prose-invert max-w-none text-gray-300 leading-relaxed"
-                dangerouslySetInnerHTML={parseMarkdown(roadmap)}
-              ></div>
-              <div className="mt-8 flex justify-center">
-                <button
-                  onClick={handleExportPDF}
-                  className="btn-hero px-8 py-3 rounded-xl text-lg font-semibold flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
-                >
-                  Export as PDF
-                </button>
-              </div>
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
+      {/* The roadmap output section is removed from here as it will be displayed in the Roadmap component */}
     </div>
   );
 };
