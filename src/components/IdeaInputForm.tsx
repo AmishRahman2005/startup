@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { marked } from 'marked';
-import html2pdf from 'html2pdf.js';
+import { marked } from 'marked'; // Keep marked for potential future use or if Roadmap component needs it
+import html2pdf from 'html2pdf.js'; // Keep html2pdf for potential future use
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import { staticRoadmapData } from '@/data/staticRoadmap'; // Import static roadmap data
 
 const IdeaInputForm: React.FC = () => {
   const [startupIdea, setStartupIdea] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
+  // This parseMarkdown is not directly used in this component anymore,
+  // but keeping it for consistency or if it's used elsewhere.
   const parseMarkdown = (text: string) => ({
     __html: text ? String(marked.parse(text)) : ''
   });
@@ -20,6 +23,7 @@ const IdeaInputForm: React.FC = () => {
     }
 
     setIsLoading(true);
+    let generatedRoadmap = staticRoadmapData; // Default to static data as fallback
 
     try {
       const response = await fetch('/api/generate-roadmap', {
@@ -31,47 +35,38 @@ const IdeaInputForm: React.FC = () => {
       });
 
       if (!response.ok) {
+        // If API call fails, an error will be thrown, and the catch block will handle it.
+        // We will use the static data in this case.
         throw new Error(`Request failed with status ${response.status}`);
       }
 
       const data = await response.json();
       console.log("Gemini API Response:", data);
 
-      const generatedText =
-        data?.roadmap ||
-        "⚠️ No roadmap generated. Try again.";
-
-      // Navigate to the roadmap page with the generated text
-      navigate('/roadmap', { state: { roadmap: generatedText } });
+      // If AI generates a roadmap, use it. Otherwise, stick with the static fallback.
+      if (data?.roadmap) {
+        generatedRoadmap = data.roadmap;
+      } else {
+        console.warn("AI did not generate a roadmap. Using static fallback.");
+      }
 
     } catch (error: any) {
-      console.error('Error generating roadmap:', error);
+      console.error('Error generating roadmap from AI, using static fallback:', error);
+      // The generatedRoadmap is already set to staticRoadmapData, so no change needed here.
       alert(
-        `❌ Error occurred while generating the roadmap. Please try again.\n\nDetails: ${
+        `❌ Error occurred while generating the roadmap from AI. Displaying static roadmap as fallback.\n\nDetails: ${
           error?.message || error
         }`
       );
     } finally {
       setIsLoading(false);
+      // Navigate to the roadmap page with the chosen roadmap text (AI or static fallback)
+      navigate('/roadmap', { state: { roadmap: generatedRoadmap } });
     }
   };
 
-  const handleExportPDF = () => {
-    // This function will now be called from the Roadmap component, or removed if not needed there.
-    // For now, it's kept here but will be removed from the UI.
-    const roadmapElement = document.getElementById('roadmap-output');
-    if (!roadmapElement) return;
-
-    const options = {
-      margin: 1,
-      filename: 'startup_roadmap.pdf',
-      image: { type: "jpeg" as "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: "portrait" as "portrait" },
-    };
-
-    html2pdf().set(options).from(roadmapElement).save();
-  };
+  // handleExportPDF is not used in this component anymore.
+  // It was previously removed from the UI, and now the function itself can be removed.
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 px-4">
@@ -85,7 +80,7 @@ const IdeaInputForm: React.FC = () => {
           Turn Your Idea Into a Strategic Roadmap
         </h1>
         <p className="text-gray-300 text-lg sm:text-xl max-w-2xl mx-auto mb-8">
-          Describe your startup idea and get an AI-generated roadmap with market analysis, competitive insights, and step-by-step execution plan.
+          Describe your startup idea and get an AI-generated roadmap, with a static fallback if the AI encounters an issue.
         </p>
       </motion.section>
 
@@ -156,8 +151,6 @@ const IdeaInputForm: React.FC = () => {
           </div>
         </div>
       </motion.section>
-
-      {/* The roadmap output section is removed from here as it will be displayed in the Roadmap component */}
     </div>
   );
 };
