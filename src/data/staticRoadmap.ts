@@ -1,5 +1,5 @@
 export const staticRoadmapData = `
-## 🗺️ Strategic Roadmap for a New Venture (Static)
+## 🗺️ Strategic Roadmap for a New Venture
 
 ### Phase 1: Initial Setup
 - Define project scope, vision, and objectives.
