@@ -45,11 +45,7 @@ const IdeaInputForm: React.FC = () => {
     } catch (error: any) {
       console.error('Error generating roadmap from AI, using static fallback:', error);
       // The generatedRoadmap is already set to staticRoadmapData, so no change needed here.
-      alert(
-        `❌ Error occurred while generating the roadmap from AI. Displaying static roadmap as fallback.\n\nDetails: ${
-          error?.message || error
-        }`
-      );
+      // Removed alert as per user request.
     } finally {
       setIsLoading(false);
       // Navigate to the roadmap page with the chosen roadmap text (AI or static fallback)
