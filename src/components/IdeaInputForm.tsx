@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { marked } from 'marked'; // Keep marked for potential future use or if Roadmap component needs it
-import html2pdf from 'html2pdf.js'; // Keep html2pdf for potential future use
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { staticRoadmapData } from '@/data/staticRoadmap'; // Import static roadmap data
 
@@ -9,12 +7,6 @@ const IdeaInputForm: React.FC = () => {
   const [startupIdea, setStartupIdea] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-
-  // This parseMarkdown is not directly used in this component anymore,
-  // but keeping it for consistency or if it's used elsewhere.
-  const parseMarkdown = (text: string) => ({
-    __html: text ? String(marked.parse(text)) : ''
-  });
 
   const handleGenerateRoadmap = async () => {
     if (!startupIdea.trim()) {
